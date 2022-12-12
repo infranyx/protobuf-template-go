@@ -1,0 +1,62 @@
+name: Generate, Checking breaking change and Lint buf
+
+on: push
+
+env:
+  GO_REPOSITORY: "protobuf-template-go"
+  RELEASE_TAG: "test"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - run: npm i semver@7.3.8
+      - name: Create Release
+        uses: "actions/github-script@v5"
+        with:
+          github-token: "${{ secrets.API_TOKEN_GITHUB }}"
+          script: |
+            const semver = require("semver");
+
+            try{
+                const { GO_REPOSITORY } = process.env;
+                const response = await github.rest.repos.listTags({
+                    owner : context.repo.owner,
+                    repo: GO_REPOSITORY,
+                });
+                let latestVersion;
+                const tags = response.data.map(tag => tag.name.toLowerCase());
+                console.log('tags:' , tags);
+                if (tags.length === 0) latestVersion = "v0.0.0";
+                else latestVersion = tags[0];
+                // else latestVersion = tags[1]; /* tags[0] is latest , tags[1] => max beta tag */
+              
+                const finalVersion = semver.inc(latestVersion , "patch");
+                if (!finalVersion || !semver.valid(finalVersion)) {
+                  throw new Error(`Invalid Final Version: ${finalVersion}`);
+                }
+            
+                console.log("\n================== Final Version ==================");
+                console.log(`final version: ${finalVersion}`);
+                console.log("===================================================\n");
+            }
+            catch (error) {
+                core.setFailed(error.message);
+            }
+
+#            try {
+#              const { GO_REPOSITORY, RELEASE_TAG } = process.env
+#              await github.rest.repos.createRelease({
+#                // tag_name: RELEASE_TAG,
+#                draft: false,
+#                release_name: `Release ${github.ref}`,
+#                generate_release_notes: true,
+#                owner: context.repo.owner,
+#                prerelease: false,
+#                repo: GO_REPOSITORY,
+#              });
+#            } catch (error) {
+#              core.setFailed(error.message);
+#            }
