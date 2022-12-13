@@ -26,19 +26,19 @@ jobs:
                 });
                 const tags = response.data.map(tag => tag.name.toLowerCase());
             
-                console.log("\n================== Pre Release ==================");
+                console.log("\n================== Beta Release ==================");
                 console.log("tags: \n" , tags , "\n");
             
                 let latestVersion;
                 if (tags.length === 0) latestVersion = "v0.0.0";
                 else latestVersion = tags[0];
 
-                let newVersion = semver.inc(latestVersion , "minor");
+                let newVersion = semver.inc(latestVersion , "patch");
                 newVersion = `v${newVersion}`;
                 if (!newVersion || !semver.valid(newVersion)) {
                   throw new Error(`Invalid New Version: ${newVersion}`);
                 }
-            
+
                 console.log("new version: " , newVersion , "\n");
                 console.log("===================================================\n");
 
@@ -47,7 +47,7 @@ jobs:
                   release_name: newVersion,
                   generate_release_notes: true,
                   draft: false,
-                  prerelease: true,
+                  prerelease: false,
                   make_latest: "false",
                   owner: context.repo.owner,
                   repo: context.repo.repo,
