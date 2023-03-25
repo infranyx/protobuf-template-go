@@ -24,7 +24,8 @@ jobs:
           echo "test0"
           semver --version
           git --version
-          git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
           echo "test0"
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
           echo "test1"
