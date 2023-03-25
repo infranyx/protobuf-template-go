@@ -29,6 +29,8 @@ jobs:
 
       - name: Create Release
         uses: "actions/github-script@v6"
+        env:
+          VERSION: ${{ VERSION }}
         with:
           script: |
             const version = process.env.VERSION
