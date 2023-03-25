@@ -1,4 +1,4 @@
-name: Create Major-Release
+name: Create Minor-Release
 
 on:
   push:
@@ -19,25 +19,35 @@ jobs:
                 https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
           chmod +x /usr/local/bin/semver
 
-      - name: Create Major Release
+      - name: Create Patch Version
         run: |
-          echo "test0"
-          semver --version
-          git --version
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          echo "test0"
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
-          echo "test1"
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
-          echo "test2"
-          VERSION=$(semver bump major $VERSION)
-          echo "test3"
-          git tag -a $VERSION -m "major release created" HEAD
-          echo "test4"
-          git push --tags
-          echo "test5"
-          echo "New Major-Release Created: ${VERSION}"
-          git checkout tags/${VERSION}
-          git checkout -b release-${VERSION}
-          git push origin release-${VERSION}
+          VERSION=$(semver bump minor $VERSION)
+
+      - name: Create Release
+        uses: "actions/github-script@v5"
+        env:
+          VERSION: ${{ VERSION }}
+        with:
+          script: |
+            const version = process.env.VERSION
+            console.log(version)
+            try{
+                await github.rest.repos.createRelease({
+                  tag_name: version,
+                  release_name: version,
+                  generate_release_notes: true,
+                  draft: false,
+                  prerelease: false,
+                  make_latest: "false",
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                });
+                
+                console.log("New Minor-Release Created: " , version , "\n");
+                console.log("===================================================\n");
+            }
+            catch (error) {
+                core.setFailed(error.message);
+            }
