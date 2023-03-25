@@ -34,11 +34,7 @@ jobs:
         with:
           script: |
             const { VERSION } = process.env
-            console.log(process.env)
             try{
-                if (!VERSION || !semver.valid(VERSION)) {
-                  throw new Error(`Invalid New Version: ${VERSION}`);
-                }
                 await github.rest.repos.createRelease({
                   tag_name: VERSION,
                   release_name: VERSION,
