@@ -19,7 +19,7 @@ jobs:
                 https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
           chmod +x /usr/local/bin/semver
 
-      - name: Create Patch Version
+      - name: Create Minor Version
         run: |
           git fetch --all --tags
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
@@ -30,7 +30,7 @@ jobs:
       - name: Create Release
         uses: "actions/github-script@v6"
         env:
-          VERSION: '${{env.VERSION}}'
+          VERSION: "${{env.VERSION}}"
         with:
           script: |
             const { VERSION } = process.env
