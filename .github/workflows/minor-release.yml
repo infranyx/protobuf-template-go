@@ -21,6 +21,8 @@ jobs:
         run: |
           echo "test0"
           git --version
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
           echo "test1"
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
