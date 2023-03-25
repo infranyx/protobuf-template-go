@@ -26,7 +26,7 @@ jobs:
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
           export VERSION=$(semver bump minor $VERSION)
           echo "$VERSION"
-          echo env
+          env
 
 
       - name: Create Release
