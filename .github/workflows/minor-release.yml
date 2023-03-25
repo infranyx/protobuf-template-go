@@ -20,7 +20,7 @@ jobs:
       - name: Create Major Release
         run: |
           echo "test0"
-          echo $(git config user.name)
+          git --version
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
           echo "test1"
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
