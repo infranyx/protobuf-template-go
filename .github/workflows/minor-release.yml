@@ -29,13 +29,14 @@ jobs:
 
       - name: Create Release
         uses: "actions/github-script@v6"
-        env:
-          VERSION: $VERSION
         with:
           script: |
             const version = process.env.VERSION
             console.log(version)
             try{
+                if (!version || !semver.valid(version)) {
+                  throw new Error(`Invalid New Version: ${version}`);
+                }
                 await github.rest.repos.createRelease({
                   tag_name: version,
                   release_name: version,
@@ -48,7 +49,7 @@ jobs:
                 });
                 
                 console.log("New Minor-Release Created: " , version , "\n");
-                console.log("===================================================\n");
+                console.log("===================================================");
             }
             catch (error) {
                 core.setFailed(error.message);
