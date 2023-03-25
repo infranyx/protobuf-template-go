@@ -26,7 +26,6 @@ jobs:
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
           export VERSION=$(semver bump minor $VERSION)
           echo "$VERSION"
-          env
 
 
       - name: Create Release
@@ -35,15 +34,15 @@ jobs:
           VERSION: '${{env.VERSION}}'
         with:
           script: |
-            const version = process.env.VERSION
-            console.log(version)
+            const { VERSION } = process.env
+            console.log(VERSION)
             try{
-                if (!version || !semver.valid(version)) {
-                  throw new Error(`Invalid New Version: ${version}`);
+                if (!VERSION || !semver.valid(VERSION)) {
+                  throw new Error(`Invalid New Version: ${VERSION}`);
                 }
                 await github.rest.repos.createRelease({
-                  tag_name: version,
-                  release_name: version,
+                  tag_name: VERSION,
+                  release_name: VERSION,
                   generate_release_notes: true,
                   draft: false,
                   prerelease: false,
@@ -52,7 +51,7 @@ jobs:
                   repo: context.repo.repo,
                 });
                 
-                console.log("New Minor-Release Created: " , version , "\n");
+                console.log("New Minor-Release Created: " , VERSION , "\n");
                 console.log("===================================================");
             }
             catch (error) {
