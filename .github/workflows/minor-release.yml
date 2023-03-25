@@ -24,12 +24,8 @@ jobs:
           git fetch --all --tags
           VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
           test -z "$VERSION" && echo "no version tag found" && VERSION=v0.0.0
-          export VERSION=$(semver bump minor $VERSION)
+          echo "{VERSION}=$(semver bump minor $VERSION)" >> $GITHUB_ENV
           echo "$VERSION"
-          
-      - name: Test Patch Version
-        run: env
-
 
       - name: Create Release
         uses: "actions/github-script@v6"
