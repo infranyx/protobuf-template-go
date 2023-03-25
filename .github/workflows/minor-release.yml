@@ -38,3 +38,7 @@ jobs:
           git push --tags
           echo "test5"
           echo "New Major-Release Created: ${VERSION}"
+          git checkout tags/${VERSION}
+          git checkout -b release-${VERSION}
+          git commit -am "Release ${VERSION}"
+          git push origin release-${VERSION}
